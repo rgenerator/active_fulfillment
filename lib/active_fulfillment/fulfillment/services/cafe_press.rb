@@ -27,8 +27,8 @@ module ActiveMerchant
       end
 
       def fulfill(order_id, shipping_address, line_items, options = {})
-        requires!(options, :order_id, :shipping_address,:line_items)
-        client.place_order(customer, order, order_items)
+        requires!(options, :customer, :order)
+        client.place_order(options[:customer], options[:order], line_items, shipping_address)
       end
 
       def fetch_stock_levels(options = {})
@@ -49,14 +49,8 @@ module ActiveMerchant
       private
 
       def initialize_ezp_client(options)
-      	requires!(options, :partner_id, :vendor_name)
-      	Client.config do
-          secure = true
-          partner_id = partner_id
-          vendor.name = vendor_name
-          # ...
-        end
-        @client = Client.new
+      	requires!(options, :partner_id, :vendor)
+        @client = Client.new(partner_id, vendor)
       end
 
       def check_test_mode(options)

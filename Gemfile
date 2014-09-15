@@ -1,3 +1,3 @@
 source "https://rubygems.org"
-gem 'cafepress-ezp-client',:git => 'git@github.com:rgenerator/cafepress-ezp-client.git'
+gem 'cafepress-ezp', :git => 'git@github.com:rgenerator/cafepress-ezp.git'
 gemspec

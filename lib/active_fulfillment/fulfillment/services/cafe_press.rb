@@ -1,4 +1,4 @@
-require 'cafepress/ezp/client'
+require 'cafe_press/ezp/client'
 include CafePress::EZP
 
 module ActiveMerchant

@@ -49,4 +49,3 @@ fulfill(order_id, shipping_address, line_items, options = {})
    ```
      cancel_order(cafe_press_order_id)
    ```
-

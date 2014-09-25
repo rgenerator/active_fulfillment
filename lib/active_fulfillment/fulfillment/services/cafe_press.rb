@@ -13,7 +13,10 @@ module ActiveMerchant
       end
 
       def fulfill(order_id, shipping_address, line_items, options = {})
-        @client.create_order(order_id, shipping_address, line_items, options)
+        response = @client.create_order(order_id, shipping_address, line_items, options)
+        Response.new(true, "Order created: #{response[:order_no]}", response)
+      rescue => e # something
+        Response.new(false, e.to_s, {})
       end
 
        def fetch_tracking_data(express_order_id, options = {})

@@ -13,7 +13,6 @@ module ActiveMerchant
       end
 
       def fulfill(order_id, shipping_address, line_items, options = {})
-        requires!(options, :order)
         @client.create_order(order_id, shipping_address, line_items, options)
       end
 
@@ -27,6 +26,10 @@ module ActiveMerchant
 
       def cancel_order(express_order_id, options = {})
         @client.cancel_order(express_order_id, options)
+      end
+
+      def get_order_by_internal_id(identiciation_code, internal_order_id, options = {})
+         @client.get_order_by_secondary_identifier(identiciation_code, internal_order_id, options)
       end
 
     end

@@ -13,6 +13,8 @@ gem 'active_fulfillment', :git => 'git://github.com/rgenerator/active_fulfillmen
 ```
 fulfill(order_id, shipping_address, line_items, options = {})
 ```
+#### Arguments
+
 * order_id is internal order identifier
 * shipping_address format (hash with keys)
     1. name
@@ -33,6 +35,12 @@ fulfill(order_id, shipping_address, line_items, options = {})
     5. options hash
 
 * Any other extra information goes into options hash
+
+#### Returns
+
+A `Response` object with the following `params`:
+
+* ????
 
 # Currently supporting
 ## Cafe Press

@@ -6,8 +6,9 @@ module ActiveMerchant
     class CafePress < Service
       attr_accessor :client, :partner_id
 
-      def initialize(partner_id, options = {})
-        @partner_id = partner_id
+      def initialize(options = {})
+      	requires!(options, :partner_id)
+        @partner_id = options[:partner_id]
         @client = Client.new(partner_id, options)
         super
       end

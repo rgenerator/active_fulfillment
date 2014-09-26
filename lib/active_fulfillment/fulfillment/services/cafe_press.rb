@@ -9,6 +9,7 @@ module ActiveMerchant
       def initialize(partner_id, options = {})
         @partner_id = partner_id
         @client = Client.new(partner_id, options)
+        super
       end
 
       def fulfill(order_id, shipping_address, line_items, options = {})

@@ -9,6 +9,7 @@ module ActiveMerchant
       def initialize(options = {})
       	requires!(options, :partner_id)
         @partner_id = options[:partner_id]
+        options.delete(:partner_id)
         @client = Client.new(partner_id, options)
         super
       end

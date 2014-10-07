@@ -12,19 +12,15 @@ module ActiveMerchant
       end
 
       def fulfill(order_id, shipping_address, line_items, options = {})
-        requires!(shipping_address, :first_name, :last_name, :address1, :city, :state, :zip_code)
+        requires!(shipping_address, :name, :address1, :city, :state, :zip)
         line_items.each do |item|
           requires!(item, :sku, :quantity)
         end
-        binding.pry
         request = build_fulfillment_request(order_id, shipping_address, line_items)
-        binding.pry
         created_order = ::Jakprints::Order.add_order(request)
-        binding.pry
         Response.new(true, "Order created: #{created_order.Order['id']}", created_order.attributes)
       rescue => e # something
         created_order = created_order || {}
-        binding.pry
         Response.new(false, e.to_s, created_order)
       end
 
@@ -48,18 +44,19 @@ module ActiveMerchant
       
       private
       def build_fulfillment_request(order_id, shipping_address, line_items)
-        binding.pry
         request = {}
         request[:Order] = { :client_ref => order_id }
         request[:Shipment] = {}
-        request[:Shipment][:first] = shipping_address[:first_name] 
-        request[:Shipment][:last] = shipping_address[:last_name] 
+        first, last = shipping_address[:name].split(' ') if shipping_address[:name]
+        request[:Shipment][:first] = first || shipping_address[:first]
+        request[:Shipment][:last] = last || shipping_address[:last]
         request[:Shipment][:address1] = shipping_address[:address1] 
         request[:Shipment][:address2] = shipping_address[:address2] if shipping_address[:address2]
         request[:Shipment][:city] = shipping_address[:city] 
         request[:Shipment][:state] = shipping_address[:state] 
-        request[:Shipment][:zip] = shipping_address[:zip_code] 
-        binding.pry
+        request[:Shipment][:zip] = shipping_address[:zip]
+        request[:Shipment][:country] = shipping_address[:country] if shipping_address[:country]
+        request[:Shipment][:phone] = shipping_address[:phone] if shipping_address[:phone]
         request[:OrderItems] = line_items.collect do |item|
           { :sku => item[:sku], :quantity => item[:quantity]}
         end

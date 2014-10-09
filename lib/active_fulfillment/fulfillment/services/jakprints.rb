@@ -21,7 +21,7 @@ module ActiveMerchant
         Response.new(true, "Order created: #{created_order.Order['id']}", created_order.attributes)
       rescue => e # something
         created_order = created_order || {}
-        Response.new(false, e.to_s, created_order)
+        Response.new(false, e.to_s)
       end
 
       def fetch_tracking_data(jakprints_order_id, options = {})
@@ -30,7 +30,7 @@ module ActiveMerchant
           Response.new(true, "Get Shipment Info response", order_response.attributes)
         rescue => e # something
           order_response = order_response || {}
-          Response.new(false, e.to_s, order_response)
+          Response.new(false, e.to_s)
         end
       end
 

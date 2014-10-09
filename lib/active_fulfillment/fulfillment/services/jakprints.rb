@@ -29,7 +29,6 @@ module ActiveMerchant
           order_response = ::Jakprints::Order.get_by_id(jakprints_order_id)
           Response.new(true, "Get Shipment Info response", order_response.attributes)
         rescue => e # something
-          order_response = order_response || {}
           Response.new(false, e.to_s)
         end
       end

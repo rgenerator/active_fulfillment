@@ -3,7 +3,7 @@ require 'cafe_press/simple_order_api/client'
 module ActiveMerchant
   module Fulfillment
     class CafePress < Service
-      include CafePress::SimpleOrderAPI
+      include ::CafePress::SimpleOrderAPI
 
       attr_accessor :client, :partner_id
 

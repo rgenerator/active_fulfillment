@@ -1,4 +1,4 @@
-require 'cafe_press/simple_order_api/client'
+require 'cafe_press/simple_order_api'
 
 module ActiveMerchant
   module Fulfillment
@@ -12,6 +12,8 @@ module ActiveMerchant
 
         options = options.dup
         requires!(options, :partner_id)
+
+        options[:test] = true if test?
 
         @partner_id = options.delete(:partner_id)
         @client = Client.new(partner_id, options)

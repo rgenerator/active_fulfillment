@@ -17,10 +17,9 @@ module ActiveMerchant
           requires!(item, :sku, :quantity)
         end
         request = build_fulfillment_request(order_id, shipping_address, line_items)
-        created_order = ::Jakprints::Order.add_order(request)
-        Response.new(true, "Order created: #{created_order.Order['id']}", created_order.attributes)
+        created_order = create_order(request)
+        Response.new(true, "Order created: #{created_order['Order']['id']}", created_order)
       rescue => e # something
-        created_order = created_order || {}
         Response.new(false, e.to_s)
       end
 
@@ -60,6 +59,11 @@ module ActiveMerchant
           { :sku => item[:sku], :quantity => item[:quantity]}
         end
         request
+      end
+      
+      def create_order(request)
+        order = ::Jakprints::Order.add_order(request)
+        order.attributes
       end
 
     end

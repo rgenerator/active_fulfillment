@@ -3,10 +3,9 @@ require 'jakprints'
 module ActiveMerchant
   module Fulfillment
     class Jakprints < Service
-      attr_accessor :client, :partner_id
-
+      
       def initialize(options = {})
-        requires!(options, :url, :username, :password)
+        requires!(options, :username, :password)
         ::Jakprints.configure options
         super
       end
@@ -23,9 +22,9 @@ module ActiveMerchant
         Response.new(false, e.to_s)
       end
 
-      def fetch_tracking_data(jakprints_order_id, options = {})
+      def fetch_tracking_data(order_id, options = {})
         begin
-          order_response = ::Jakprints::Order.get_by_id(jakprints_order_id)
+          order_response = ::Jakprints::Order.get_by_id(order_id)
           Response.new(true, "Get Shipment Info response", order_response.attributes)
         rescue => e # something
           Response.new(false, e.to_s)

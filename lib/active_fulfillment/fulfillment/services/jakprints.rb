@@ -1,7 +1,5 @@
 require 'jakprints'
 
-include CafePress::SimpleOrderAPI
-
 module ActiveMerchant
   module Fulfillment
     class Jakprints < Service
@@ -9,7 +7,6 @@ module ActiveMerchant
 
       def initialize(options = {})
         super
-
         requires!(options, :partner_id)
         @partner_id = options[:partner_id]
         options.delete(:partner_id)
@@ -18,7 +15,6 @@ module ActiveMerchant
       end
 
       def fulfill(order_id, shipping_address, line_items, options = {})
-        
         response = @client.create_order(order_id, shipping_address, line_items, options)
         Response.new(true, "Order created: #{response[:order_no]}", response)
       rescue => e # something

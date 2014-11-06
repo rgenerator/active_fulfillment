@@ -3,7 +3,7 @@ require 'jakprints'
 module ActiveMerchant
   module Fulfillment
     class Jakprints < Service
-      
+
       def initialize(options = {})
         requires!(options, :username, :password)
         ::Jakprints.configure options
@@ -38,7 +38,11 @@ module ActiveMerchant
       def cancel_order(express_order_id, options = {})
         raise NotImplementedError, 'cancel_order is not implemented'
       end
-      
+
+      def test_mode?
+        true
+      end
+
       private
       def build_fulfillment_request(order_id, shipping_address, line_items)
         request = {}
@@ -47,10 +51,10 @@ module ActiveMerchant
         first, last = shipping_address[:name].split(' ') if shipping_address[:name]
         request[:Shipment][:first] = first || shipping_address[:first]
         request[:Shipment][:last] = last || shipping_address[:last]
-        request[:Shipment][:address1] = shipping_address[:address1] 
+        request[:Shipment][:address1] = shipping_address[:address1]
         request[:Shipment][:address2] = shipping_address[:address2] if shipping_address[:address2]
-        request[:Shipment][:city] = shipping_address[:city] 
-        request[:Shipment][:state] = shipping_address[:state] 
+        request[:Shipment][:city] = shipping_address[:city]
+        request[:Shipment][:state] = shipping_address[:state]
         request[:Shipment][:zip] = shipping_address[:zip]
         request[:Shipment][:country] = shipping_address[:country] if shipping_address[:country]
         request[:Shipment][:phone] = shipping_address[:phone] if shipping_address[:phone]
@@ -59,7 +63,7 @@ module ActiveMerchant
         end
         request
       end
-      
+
       def create_order(request)
         order = ::Jakprints::Order.add_order(request)
         order.attributes

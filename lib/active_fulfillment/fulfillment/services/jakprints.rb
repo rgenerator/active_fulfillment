@@ -3,9 +3,14 @@ require 'jakprints'
 module ActiveMerchant
   module Fulfillment
     class Jakprints < Service
-
+      TEST_URL = "sandpod.pod.jakprints.com"
+      
       def initialize(options = {})
+        options = options.dup
         requires!(options, :username, :password)
+        
+        options[:url] = TEST_URL if test?
+
         ::Jakprints.configure options
         super
       end

@@ -7,7 +7,7 @@ module ActiveMerchant
 
       def initialize(options = {})
         options = options.dup
-        requires!(options, :username, :password, :url)
+        requires!(options, :username, :password)
         ::Jakprints.configure options
         super
       end

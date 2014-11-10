@@ -7,10 +7,7 @@ module ActiveMerchant
 
       def initialize(options = {})
         options = options.dup
-        requires!(options, :username, :password)
-
-        options[:url] = TEST_URL if test?
-
+        requires!(options, :username, :password, :url)
         ::Jakprints.configure options
         super
       end

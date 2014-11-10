@@ -4,11 +4,11 @@ module ActiveMerchant
   module Fulfillment
     class Jakprints < Service
       TEST_URL = "sandpod.pod.jakprints.com"
-      
+
       def initialize(options = {})
         options = options.dup
         requires!(options, :username, :password)
-        
+
         options[:url] = TEST_URL if test?
 
         ::Jakprints.configure options
@@ -42,10 +42,6 @@ module ActiveMerchant
 
       def cancel_order(express_order_id, options = {})
         raise NotImplementedError, 'cancel_order is not implemented'
-      end
-
-      def test_mode?
-        true
       end
 
       private

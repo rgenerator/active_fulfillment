@@ -3,7 +3,7 @@ require 'jakprints'
 module ActiveMerchant
   module Fulfillment
     class Jakprints < Service
-      TEST_URL = "sandpod.pod.jakprints.com"
+      TEST_URL = "https://sandpod.pod.jakprints.com"
 
       def initialize(options = {})
         super
@@ -22,8 +22,14 @@ module ActiveMerchant
         end
 
         request = build_fulfillment_request(order_id, shipping_address, line_items)
-        created_order = create_order(request)
-        Response.new(true, "Order created: #{created_order['Order']['id']}", created_order)
+        response = create_order(request)
+        # Check for an error response.
+        # TODO: This check should be in Jakprints::Client.
+        if error = response.attributes.include?(:name)
+          Response.new(false, "Order error: #{error}")
+        else
+          Response.new(true, "Order created: #{created_order['Order']['id']}", response)
+        end
       rescue ArgumentError => e
         # ArgumentError if fields are missing
         Response.new(false, "Invalid order: #{e}")

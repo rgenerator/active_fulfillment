@@ -34,9 +34,10 @@ module ActiveMerchant
 
       def fetch_tracking_data(order_id, options = {})
         order_response = ::Jakprints::Order.get_by_id(order_id)
-        # nil if no order?
-        if order_response.nil?
-          Response.new(false, "Order not found #{order_id}")
+        # Check for an error response.
+        # TODO: This check should be in Jakprints::Client.
+        if order_response.attributes.include?(:name)
+          Response.new(false, "Order not found  #{order_id}")
         else
           Response.new(true, "Get Shipment Info response", order_response.attributes)
         end

@@ -25,10 +25,10 @@ module ActiveMerchant
         response = create_order(request)
         # Check for an error response.
         # TODO: This check should be in Jakprints::Client.
-        if error = response.attributes.include?(:name)
+        if error = response[:name]
           Response.new(false, "Order error: #{error}")
         else
-          Response.new(true, "Order created: #{created_order['Order']['id']}", response)
+          Response.new(true, "Order created: #{response['Order']['id']}", response)
         end
       rescue ArgumentError => e
         # ArgumentError if fields are missing
@@ -39,17 +39,7 @@ module ActiveMerchant
       end
 
       def fetch_tracking_data(order_id, options = {})
-        order_response = ::Jakprints::Order.get_by_id(order_id)
-        # Check for an error response.
-        # TODO: This check should be in Jakprints::Client.
-        if order_response.attributes.include?(:name)
-          Response.new(false, "Order not found  #{order_id}")
-        else
-          Response.new(true, "Get Shipment Info response", order_response.attributes)
-        end
-      rescue => e
-        # TODO: what can be raised from Jakprints?
-        raise ActiveMerchant::ConnectionError, e.to_s
+        raise NotImplementedError, 'fetch_tracking_data is not implemented'
       end
 
       def fetch_stock_levels(options = {})

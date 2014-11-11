@@ -6,11 +6,12 @@ module ActiveMerchant
       attr_accessor :client, :partner_id
 
       def initialize(options = {})
+        super
+
         requires!(options, :partner_id)
         @partner_id = options[:partner_id]
         options.delete(:partner_id)
         @client = ::CafePress::SimpleOrderAPI::Client.new(partner_id, options)
-        super
       end
 
       def fulfill(order_id, shipping_address, line_items, options = {})

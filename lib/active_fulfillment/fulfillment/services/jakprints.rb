@@ -6,12 +6,12 @@ module ActiveMerchant
       TEST_URL = "sandpod.pod.jakprints.com"
 
       def initialize(options = {})
+        super
+
         requires!(options, :username, :password)
         options[:url] = TEST_URL if test?
 
         ::Jakprints.configure options
-
-        super
       end
 
       def fulfill(order_id, shipping_address, line_items, options = {})

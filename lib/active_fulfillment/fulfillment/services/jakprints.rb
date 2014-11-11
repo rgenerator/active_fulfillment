@@ -6,34 +6,43 @@ module ActiveMerchant
       TEST_URL = "sandpod.pod.jakprints.com"
 
       def initialize(options = {})
-        options = options.dup
         requires!(options, :username, :password)
-
-        options[:url] = TEST_URL if options[:test]
+        options[:url] = TEST_URL if test?
 
         ::Jakprints.configure options
+
         super
       end
 
       def fulfill(order_id, shipping_address, line_items, options = {})
         requires!(shipping_address, :name, :address1, :city, :state, :zip)
+
         line_items.each do |item|
           requires!(item, :sku, :quantity)
         end
+
         request = build_fulfillment_request(order_id, shipping_address, line_items)
         created_order = create_order(request)
         Response.new(true, "Order created: #{created_order['Order']['id']}", created_order)
-      rescue => e # something
-        Response.new(false, e.to_s)
+      rescue ArgumentError => e
+        # ArgumentError if fields are missing
+        Response.new(false, "Invalid order: #{e}")
+      rescue => e
+        # TODO: what can be raised from Jakprints?
+        raise ActiveMerchant::ConnectionError, e.to_s
       end
 
       def fetch_tracking_data(order_id, options = {})
-        begin
-          order_response = ::Jakprints::Order.get_by_id(order_id)
+        order_response = ::Jakprints::Order.get_by_id(order_id)
+        # nil if no order?
+        if order_response.nil?
+          Response.new(false, "Order not found #{order_id}")
+        else
           Response.new(true, "Get Shipment Info response", order_response.attributes)
-        rescue => e # something
-          Response.new(false, e.to_s)
         end
+      rescue => e
+        # TODO: what can be raised from Jakprints?
+        raise ActiveMerchant::ConnectionError, e.to_s
       end
 
       def fetch_stock_levels(options = {})

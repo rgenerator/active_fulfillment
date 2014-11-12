@@ -3,13 +3,18 @@ require 'jakprints'
 module ActiveMerchant
   module Fulfillment
     class Jakprints < Service
-      TEST_URL = "https://sandpod.pod.jakprints.com"
+      TEST_URL = "https://sandbox.pod.jakprints.com"
 
       def initialize(options = {})
         super
 
         requires!(options, :username, :password)
-        options[:url] = TEST_URL if test?
+
+        if test?
+          options[:url] = TEST_URL
+          # Jakprints sandbox has bad cert
+          options[:ssl] = { :verify => false }
+        end
 
         ::Jakprints.configure options
       end

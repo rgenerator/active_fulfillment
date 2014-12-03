@@ -3,37 +3,48 @@ require 'jakprints'
 module ActiveMerchant
   module Fulfillment
     class Jakprints < Service
-      TEST_URL = "sandpod.pod.jakprints.com"
+      TEST_URL = "https://sandbox.pod.jakprints.com"
 
       def initialize(options = {})
-        options = options.dup
+        super
+
         requires!(options, :username, :password)
 
-        options[:url] = TEST_URL if options[:test]
+        if test?
+          options[:url] = TEST_URL
+          # Jakprints sandbox has bad cert
+          options[:ssl] = { :verify => false }
+        end
 
         ::Jakprints.configure options
-        super
       end
 
       def fulfill(order_id, shipping_address, line_items, options = {})
         requires!(shipping_address, :name, :address1, :city, :state, :zip)
+
         line_items.each do |item|
           requires!(item, :sku, :quantity)
         end
+
         request = build_fulfillment_request(order_id, shipping_address, line_items)
-        created_order = create_order(request)
-        Response.new(true, "Order created: #{created_order['Order']['id']}", created_order)
-      rescue => e # something
-        Response.new(false, e.to_s)
+        response = create_order(request)
+        # Check for an error response.
+        # TODO: This check should be in Jakprints::Client.
+        if error = response[:name]
+          Response.new(false, "Order error: #{error}")
+        else
+          Response.new(true, "Order created: #{response['Order']['id']}", response)
+        end
+      rescue ArgumentError => e
+        # ArgumentError if fields are missing
+        Response.new(false, "Invalid order: #{e}")
+      rescue => e
+        # TODO: what can be raised from Jakprints?
+        raise ActiveMerchant::ConnectionError, e.to_s
       end
 
       def fetch_tracking_data(order_id, options = {})
-        begin
-          order_response = ::Jakprints::Order.get_by_id(order_id)
-          Response.new(true, "Get Shipment Info response", order_response.attributes)
-        rescue => e # something
-          Response.new(false, e.to_s)
-        end
+        raise NotImplementedError, 'fetch_tracking_data is not implemented'
       end
 
       def fetch_stock_levels(options = {})

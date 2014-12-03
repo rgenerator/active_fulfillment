@@ -41,7 +41,12 @@ module ActiveMerchant
       end
 
       def cancel_order(express_order_id, options = {})
-        raise NotImplementedError, 'cancel_order is not implemented'
+        begin
+          cancel_order_response = ::Jakprints::Order.update_order(express_order_id, build_cancel_order_request.to_json)
+          Response.new(true, "Cancel Orderresponse", cancel_order_response.attributes)
+        rescue => e
+          Response.new(false, e.to_s)
+        end
       end
 
       def test_mode?
@@ -49,6 +54,15 @@ module ActiveMerchant
       end
 
       private
+
+      def build_cancel_order_request
+        {
+         Order: {
+           status_cancelled: true
+          }
+        }
+      end
+
       def build_fulfillment_request(order_id, shipping_address, line_items)
         request = {}
         request[:Order] = { :client_ref => order_id }

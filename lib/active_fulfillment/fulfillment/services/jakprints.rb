@@ -1,4 +1,5 @@
 require 'jakprints'
+require 'json'
 
 module ActiveMerchant
   module Fulfillment
@@ -53,7 +54,7 @@ module ActiveMerchant
 
       def cancel_order(express_order_id, options = {})
         begin
-          cancel_order_response = ::Jakprints::Order.update_order(express_order_id, build_cancel_order_request.to_json)
+          cancel_order_response = ::Jakprints::Order.update_order(express_order_id, build_cancel_order_request)
           Response.new(true, "Cancel Orderresponse", cancel_order_response.attributes)
         rescue => e
           Response.new(false, e.to_s)
@@ -67,11 +68,7 @@ module ActiveMerchant
       private
 
       def build_cancel_order_request
-        {
-         Order: {
-           status_cancelled: true
-          }
-        }
+        JSON.parse({Order: {status_cancelled:true}}.to_json)
       end
 
       def build_fulfillment_request(order_id, shipping_address, line_items)

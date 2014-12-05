@@ -68,7 +68,7 @@ module ActiveMerchant
       private
 
       def build_cancel_order_request
-        JSON.parse({Order: {status_cancelled:true}}.to_json)
+        {'Order' => {'status_cancelled' => true} }
       end
 
       def build_fulfillment_request(order_id, shipping_address, line_items)

@@ -31,7 +31,7 @@ module ActiveMerchant
         response = create_order(request)
         # Check for an error response.
         # TODO: This check should be in Jakprints::Client.
-        if [400, 404, 405, 500].include?(response[:code])
+        if response[:code]
           error = response[:message]
           Response.new(false, "Order error: #{error}")
         else
